@@ -6,6 +6,11 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONProtocol
 import ast
+from datetime import datetime
+
+
+startTime = datetime.now()
+
 
 class KNNTrain(MRJob):
 
@@ -40,4 +45,6 @@ class KNNTrain(MRJob):
         yield label, features_list
 
 if __name__ == '__main__':
+    startTime = datetime.now()
     KNNTrain.run()
+    print(datetime.now() - startTime)

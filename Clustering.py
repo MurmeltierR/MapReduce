@@ -29,7 +29,6 @@ for k in range(2, 30):
    silhouette_coefficients.append(score)
    print(k)
 
-
 plt.style.use("fivethirtyeight")
 plt.plot(range(2, 30), silhouette_coefficients)
 plt.xticks(range(2, 30))
@@ -43,9 +42,3 @@ plt.xticks(range(2, 30))
 plt.xlabel("Number of Clusters")
 plt.ylabel("SSE")
 plt.show()
-
-# cluster_model = cluster.KMeans(n_clusters=k,  init='k-means++')
-# cluster_model.fit(data[:,2:])
-
-# predict=cluster_model.predict(data[:,2:])
-# data['NEW_COLUMN'] = pd.Series(predict, index=df.index)

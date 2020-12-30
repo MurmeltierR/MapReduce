@@ -12,6 +12,10 @@ from itertools import islice
 import ast
 import csv
 import pandas as pd
+from datetime import datetime
+
+
+startTime = datetime.now()
 
 k = 10 
 model = {}
@@ -93,34 +97,12 @@ with open(".\\test_neu.csv") as src:
             #print(neighbour)
             #print(neighbour[3])
             df_new = df_new.append(file[(file['id'] == neighbour[3])])
-            # df_new = file[(file['acousticness'] == neighbour[1][0]) & 
-            # (file['danceability'] == neighbour[1][1]) &
-            # (file['energy'] == neighbour[1][2]) &
-            # (file['instrumentalness'] == neighbour[1][3]) &
-            # (file['key'] == neighbour[1][4]) &
-            # (file['liveness'] == neighbour[1][5]) &
-            # (file['loudness'] == neighbour[1][6]) &
-            # (file['mode'] == neighbour[1][7]) &
-            # (file['speechiness'] == neighbour[1][8]) &
-            # (file['tempo'] == neighbour[1][9]) &
-            # (file['valence'] == neighbour[1][10])]
 
 print(df_new)
-#df_new.convert_dtypes()
-#(df['Salary_in_1000']>=100) & (df['Age']< 60) & (df['FT_Team']
-#[file]# == nearest[1][1][1].astype('float64'
-#rows = [row for row in reader if row['Total_Depth'] != '0']
-#rows = [row for row in file if 'acousticness'==nearest[1][1][1]]
-#'acousticness', 'danceability', 'energy', 'instrumentalness', 'key',
-#       'liveness', 'loudness', 'mode', 'speechiness', 'tempo', 'valence'
-#['acousticness','danceability','energy','instrumentalness','key','liveness','loudness','mode','speechiness','tempo','valence']
-#[956.0, 444.0, 0.19699999999999998, 435.0, 11.0, 0.0744, -17226.0, 1.0, 0.04, 80495.0, 305.0]
-#        993.0, 409.0, 0.057999999999999996, 631.0, 4.0, 253.0, -19395.0, 0.0, 0.0364, 63371.0, 0.6759999999999999
-#0.9940000000000001,0.379,0.0135,0.9009999999999999,8,0.0763,-28.454,1,0.0462,83.97200000000002,0.0767
+
 print('Ihre Songvorschläge basierend auf Ihrer Eingabe: \n')
 
 for index, song in df_new.iterrows():
     print('Name des Songs: {} \n Künstler: {} \n'.format(song['name'], song['artists']))
-#print("Ihr Liedvorschlag! Songname: " + str(df_new['name']) + "  von  " + str(df_new['artists']))
-#[0.9940000000000001, 379.0, 0.0135, 0.9009999999999999, 8.0, 0.0763, -28454.0, 1.0, 0.0462, 83.97200000000002, 0.0767]
-#[0.9940000000000001, 0.379, 0.0135, 0.9009999999999999, 8, 0.0763, -28.454, 1, 0.0462, 83.97200000000002, 0.0767]
+
+print(datetime.now() - startTime)

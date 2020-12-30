@@ -25,4 +25,4 @@ predict = cluster_model.predict(data[:,:])
 
 result = np.column_stack((data, predict))
 
-np.savetxt('clustered_data.csv', result, encoding = 'utf-8', fmt = "%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%d")#%s,
+np.savetxt('clustered_data.csv', result, encoding = 'utf-8', fmt = "%s,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%.10f,%d")#%s,
