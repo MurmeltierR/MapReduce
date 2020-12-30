@@ -47,7 +47,6 @@ class KNNTest(MRJob):
         else:
             #read model
             self.model = {}
-            job = MRKnnTrain.KNNTrain()
             with open(current+'/'+self.options.model,encoding='utf-16') as src:
                 for line in src:
                     # For each line of the model file, read the corresponding labels and features and store them in the dictionary.

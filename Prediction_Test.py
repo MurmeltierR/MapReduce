@@ -41,7 +41,7 @@ with open(".\\test_neu.csv") as src:
         data = line.split(',')
         label = data[-1]
         #print(data[:-1])
-        #print(data[-1])
+        print(data[-1])
         features = [float(x) for x in data[:-1]]
         #print(features)
         nearest = [] #k nearest points
@@ -74,8 +74,8 @@ with open(".\\test_neu.csv") as src:
         for i in range(len(nearest)):
             temp = heapq.heappop(nearest)
             #print(heapq.heappop(nearest))
-            #print(temp[2])
-            #print(count)
+            print(temp[2])
+            print(count)
             if(temp[2] not in count):
                 count[temp[2]] = 1
             else:
@@ -83,15 +83,15 @@ with open(".\\test_neu.csv") as src:
             #print(count[temp[2]])
         # of most calculated categories        
         res = max(count, key=count.get)
-        #print(res)
+        print(res)
         # Output true if the prediction is successful, otherwise false
         if(res==label):
             predictor_true += 1
         else:
             predictor_false += 1
 
-        # print(predictor)
-    
+        print(predictor_true)
+        print(predictor_false)
         #temp = heapq.heappop(nearest)
         # print(temp)
         # for neighbour in nearest:
