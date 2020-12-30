@@ -18,8 +18,6 @@ startTime = datetime.now()
 
 k = 10 
 model = {}
-predictor_true = 0
-predictor_false = 0
 df_new = pd.DataFrame()
 with open('.\model_neu.json',encoding='utf-16') as src:
     for line in src:
@@ -36,6 +34,8 @@ with open('.\model_neu.json',encoding='utf-16') as src:
 #print(list(model.values())[0])
 #file = pd.read_csv('.\data.csv')
 with open(".\\test_neu.csv") as src:
+    predictor_true = 0
+    predictor_false = 0
     for line in src:
         # Extract feature set and class
         data = line.split(',')
