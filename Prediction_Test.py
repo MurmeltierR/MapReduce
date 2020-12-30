@@ -13,13 +13,15 @@ import ast
 import csv
 import pandas as pd
 from datetime import datetime
+from sklearn.metrics import confusion_matrix
+
 
 startTime = datetime.now()
 
 k = 10 
 model = {}
 df_new = pd.DataFrame()
-with open('.\model_neu.json',encoding='utf-16') as src:
+with open('./model_neu.json',encoding='utf-16') as src:
     for line in src:
         label_model, features_model = line.split('\t')
         features_model = features_model.replace('\n', '')
@@ -32,10 +34,11 @@ with open('.\model_neu.json',encoding='utf-16') as src:
 #model_neu = json.loads(model)
 #print(list(model_neu.items())[0])
 #print(list(model.values())[0])
-file = pd.read_csv('.\data.csv')
-with open(".\\test_neu.csv") as src:
+#file = pd.read_csv('.\data.csv')
+with open("./test_neu.csv") as src:
     predictor_true = 0
     predictor_false = 0
+    y_pred=[]
     for line in src:
         # Extract feature set and class
         data = line.split(',')
@@ -68,45 +71,44 @@ with open(".\\test_neu.csv") as src:
                     # If the distance of the new point is less than the longest point in the nearest, the longest point is popped out and the new point enters the nearest
                     heapq.heapreplace(nearest,item)
         
-        # heaptemp = heapq.heappop(nearest)
-        # #print(range(len(nearest)))
+        heaptemp = heapq.heappop(nearest)
+        #print(range(len(nearest)))
 
-        # for i in range(len(nearest)):
-        #     temp = heapq.heappop(nearest)
-        #     #print(heapq.heappop(nearest))
-        #     print(temp[2])
-        #     print(count)
-        #     if(temp[2] not in count):
-        #         count[temp[2]] = 1
-        #     else:
-        #         count[temp[2]] += 1
-        #     #print(count[temp[2]])
-        # # of most calculated categories        
-        # res = max(count, key=count.get)
-        # print(res)
-        # # Output true if the prediction is successful, otherwise false
-        # if(res==label):
-        #     predictor_true += 1
-        # else:
-        #     predictor_false += 1
+        for i in range(len(nearest)):
+            temp = heapq.heappop(nearest)
+            #print(heapq.heappop(nearest))
+            #print(temp[2])
+            #print(count)
+            if(temp[2] not in count):
+                count[temp[2]] = 1
+            else:
+                count[temp[2]] += 1
+            #print(count[temp[2]])
+        # of most calculated categories        
+        res = max(count, key=count.get)
+        y_pred.append(res)
+        # Output true if the prediction is successful, otherwise false
+        if(res==label):
+            predictor_true += 1
+        else:
+            predictor_false += 1
 
-        # print(predictor_true)
-        # print(predictor_false)
+        print(predictor_true)
+        print(predictor_false)
         #temp = heapq.heappop(nearest)
         # print(temp)
-        for neighbour in nearest:
-            #print(neighbour)
-            #print(neighbour[3])
-            df_new = df_new.append(file[(file['id'] == neighbour[3])])
+        # for neighbour in nearest:
+        #     #print(neighbour)
+        #     #print(neighbour[3])
+        #     df_new = df_new.append(file[(file['id'] == neighbour[3])])
     
-#print("Accuary:"+str(predictor_true/(predictor_true+predictor_false)*100)+"%")
+print("Accuary:"+str(predictor_true/(predictor_true+predictor_false)*100)+"%")
 print(datetime.now() - startTime)
-
 # print(df_new)
 
 # print('Ihre Songvorschläge basierend auf Ihrer Eingabe: \n')
 
-for index, song in df_new.iterrows():
-    print('Name des Songs: {} \n Künstler: {} \n'.format(song['name'], song['artists']))
+# for index, song in df_new.iterrows():
+#     print('Name des Songs: {} \n Künstler: {} \n'.format(song['name'], song['artists']))
 
 # print(datetime.now() - startTime)
