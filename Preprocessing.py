@@ -6,11 +6,9 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 df_to_cluster = pd.read_csv('.\data.csv')
-#this is the data to be used to initialize the centroids for the clusters of genres in the 160k+ tracks
-
 df_to_cluster = df_to_cluster.drop(columns=['id','duration_ms','release_date','popularity','year','explicit'])
-df_to_cluster = df_to_cluster[['acousticness', 'danceability', 'energy', 'instrumentalness', 'key',
-       'liveness', 'loudness', 'mode', 'speechiness', 'tempo', 'valence']] #'id', #'name','artists',
+df_to_cluster = df_to_cluster[['id','acousticness', 'danceability', 'energy', 'instrumentalness', 'key',
+       'liveness', 'loudness', 'mode', 'speechiness', 'tempo', 'valence']] # #'name','artists',
 
 data = df_to_cluster.iloc[:,:].values
 

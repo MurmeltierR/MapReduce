@@ -8,7 +8,9 @@ import MRKnnTrain
 import heapq
 import os
 import ast
+from datetime import datetime
 
+startTime = datetime.now()
 current = os.getcwd()
 true = 0
 false = 0
@@ -129,3 +131,4 @@ class KNNTest(MRJob):
 if __name__ == '__main__':
     KNNTest.run()
     print("Accuary:"+str(true/(true+false)*100)+"%")
+    print(datetime.now() - startTime)
