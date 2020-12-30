@@ -16,22 +16,17 @@ import ast
 OUTPUT_PROTOCOL = JSONProtocol
 
 current = os.getcwd()
-df_new = pd.DataFrame()
 #counter = 0
 class KNNTest(MRJob):
-    '''
-    KNN predicts classes. Receive test sets from the file and predict their classes based on the features of the test sets and compares 
-    them with the real classes to see if the prediction is successful
-    '''
-        
+
     def configure_args(self):
         '''
         Input args. including the address of the model (output of KNNTrain), and the value of K.
         '''
         super(KNNTest,self).configure_args()
         #model's address
-        self.add_passthru_arg("--model",
-                                type = str,)
+        # self.add_passthru_arg("--data",
+        #                         type = str,)
         #The value of k
         self.add_passthru_arg("-k",
                                 type = str,
@@ -43,21 +38,21 @@ class KNNTest(MRJob):
         '''
         super(KNNTest,self).load_args(args)
         #read model
-        if self.options.model is None:
-            #No input mod, error reported
-            self.option_parser.error("please type a path")
-        else:
-            #read model
-            self.model = {}
-            #job = MRKnnTrain.KNNTrain()
-            with open(current+'/'+self.options.model,encoding='utf-16') as src:
-                for line in src:
-                    # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
-                    label_model, features_model = line.split('\t')
-                    features_model = features_model.replace('\n', '')#.strip('][').split(', ')
-                    features_model = ast.literal_eval(features_model)
-                    label_model = ast.literal_eval(label_model)
-                    self.model[label_model] = features_model
+        # if self.options.data is None:
+        #     #No input mod, error reported
+        #     self.option_parser.error("please type a path")
+        # else:
+        #     #read model
+        #     self.data = {}
+        #     #job = MRKnnTrain.KNNTrain()
+        #     with open(current+'/'+self.options.data,encoding='utf-16') as src:
+        #         for line in src:
+        #             # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
+        #             label_model, features_model = line.split('\t')
+        #             features_model = features_model.replace('\n', '')#.strip('][').split(', ')
+        #             features_model = ast.literal_eval(features_model)
+        #             label_model = ast.literal_eval(label_model)
+        #             self.data[label_model] = features_model
 
         #read k values
         try:
@@ -69,9 +64,30 @@ class KNNTest(MRJob):
         super(KNNTest, self).__init__(*args, **kwargs)
 
     def steps(self): 
-        return ([MRStep(mapper=self.mapper,reducer=self.reducer)])
+        return ([MRStep(mapper=self.mapper_data,reducer=self.reducer_data),
+        MRStep(mapper=self.mapper_knn,reducer=self.reducer_knn)
+        ])
 
-    def mapper(self,_,line):
+
+    def mapper_data(self,_,line):
+        '''
+        Mapper function that takes the rows of the training set, distinguishes the types in the rows from the feature set, and outputs (type, feature set)
+        '''
+        data = line.split(',')
+        yield data[-1], (data[:-1])
+
+    def reducer_data(self, label, features):
+        '''
+        Reducer function that takes Mapper output and concatenates feature sets of the same type, output (type, list of feature sets)
+        '''
+        features_list = []
+        #datapoints = features[1:]
+        for feature in features:
+            #feature = [ast.literal_eval(x) for x in feature]
+            features_list.append(feature)
+        yield label, features_list
+
+    def mapper_knn(self,_,line):
         '''
         Mapper function. Receives each row of the test set, extracts its feature set, and calculates the K points in the training set that are closest to it.
         The class with the most K points is determined and the class corresponding to that test ssample is predicted to be that class. 
@@ -79,9 +95,9 @@ class KNNTest(MRJob):
         # Extract feature set and class of test data
         data = line.split(',')
         label = data[-1]
-        features = [float(x) for x in data[1:-1]] #austauschen durch lambda
-        features_id = data[0]
+        features = [float(x) for x in data[:-1]] #austauschen durch lambda
         nearest = [] #k nearest points
+        count = {} #The number corresponding to each category in nearest
 
         for cat in self.model:
             for point in self.model[cat]:
@@ -103,9 +119,10 @@ class KNNTest(MRJob):
                     #If the distance of the new point is less than the longest point in the nearest, the longest point is popped out and the new point enters the nearest
                     heapq.heapreplace(nearest,item)
               
-        yield features_id, nearest
+        yield features, nearest
+        #self.show_tree(nearest)
 
-    def reducer(self, features_id, nearest):
+    def reducer_knn(self, features, nearest):
         '''
         Reducer function that checks for suggestions for each line and writes them in a file
         '''
@@ -114,24 +131,8 @@ class KNNTest(MRJob):
             for i in near:
                 nearest_list.append(i[3]) 
 
-        yield features_id, nearest_list
-
-    
-    # def map_id_to_song(self, file):
-    #     song_dict = {}
-    #     original_file = pd.read_csv('.\data.csv')
-    #     with open(file,encoding='utf-16') as src:
-    #         for line in src:
-    #             input_song, output_songs = line.split('\t')
-    #             output_songs = output_songs.replace('\n', '')
-    #             song_dict[input_song] = output_songs
-        
-    #     for song in song_dict:
-
-    #         for suggested_song in song:
-    #             df_new = df_new.append(original_file[(original_file['id'] == suggested_song)])
+        yield features, nearest_list
 
 if __name__ == '__main__':
     KNNTest.run()
-    #self.map_id_to_song('.\output.json')
     #self.show_tree(nearest)

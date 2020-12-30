@@ -4,7 +4,6 @@ from sklearn import cluster
 import os
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score
-from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
 df_to_cluster = pd.read_csv('.\data.csv')

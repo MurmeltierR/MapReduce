@@ -127,6 +127,7 @@ class KNNTest(MRJob):
             global false
             false = sum(num)
 
+    
 if __name__ == '__main__':
     KNNTest.run()
     print("Accuary:"+str(true/(true+false)*100)+"%")
