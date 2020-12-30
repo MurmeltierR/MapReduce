@@ -7,7 +7,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
-df_to_cluster = pd.read_csv('.\SpotifyGenres\data\data.csv')
+df_to_cluster = pd.read_csv('.\data.csv')
 
 df_to_cluster = df_to_cluster.drop(columns=['duration_ms','release_date','popularity','year','id','explicit'])
 df_to_cluster = df_to_cluster[['name','artists','acousticness', 'danceability', 'energy', 'instrumentalness', 'key',

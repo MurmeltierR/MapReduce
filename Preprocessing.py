@@ -5,7 +5,7 @@ import os
 from sklearn.preprocessing import MinMaxScaler
 
 
-df_to_cluster = pd.read_csv('.\SpotifyGenres\data\data.csv')
+df_to_cluster = pd.read_csv('.\data.csv')
 #this is the data to be used to initialize the centroids for the clusters of genres in the 160k+ tracks
 
 df_to_cluster = df_to_cluster.drop(columns=['id','duration_ms','release_date','popularity','year','explicit'])

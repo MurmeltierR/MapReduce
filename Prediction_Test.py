@@ -29,7 +29,7 @@ with open('.\model_neu.json',encoding='utf-16') as src:
 #model_neu = json.loads(model)
 #print(list(model_neu.items())[0])
 #print(list(model.values())[0])
-file = pd.read_csv('.\SpotifyGenres\data\data.csv')
+file = pd.read_csv('.\data.csv')
 with open(".\\test_neu.csv") as src:
     for line in src:
         # Extract feature set and class
