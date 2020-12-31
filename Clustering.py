@@ -3,8 +3,17 @@ import pandas as pd
 from sklearn import cluster
 import os
 import matplotlib.pyplot as plt
+import matplotlib
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import MinMaxScaler
+
+matplotlib.use("pgf")
+matplotlib.rcParams.update({
+    "pgf.texsystem": "pdflatex",
+    'font.family': 'serif',
+    'text.usetex': True,
+    'pgf.rcfonts': False,
+})
 
 df_to_cluster = pd.read_csv('.\data.csv')
 
@@ -20,7 +29,7 @@ data[:,2:] = scaler.fit_transform(data[:,2:])
 
 sse = []
 silhouette_coefficients = []
-for k in range(2, 30):
+for k in range(2, 3):
    cluster_model = cluster.KMeans(n_clusters=k,  init='k-means++')
    cluster_model.fit(data[:,2:])
    score = silhouette_score(data[:,2:], cluster_model.labels_)
@@ -33,11 +42,16 @@ plt.plot(range(2, 30), silhouette_coefficients)
 plt.xticks(range(2, 30))
 plt.xlabel("Number of Clusters")
 plt.ylabel("Silhouette Coefficient")
-plt.show()
+#plt.show()
+
+plt.savefig('Silhouette_Coefficient.pgf')
 
 plt.style.use("fivethirtyeight")
 plt.plot(range(2, 30), sse)
 plt.xticks(range(2, 30))
 plt.xlabel("Number of Clusters")
 plt.ylabel("SSE")
-plt.show()
+#plt.show()
+
+plt.savefig('Ellbow.pgf')
+
