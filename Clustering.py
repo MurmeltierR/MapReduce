@@ -7,13 +7,13 @@ import matplotlib
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import MinMaxScaler
 
-matplotlib.use("pgf")
-matplotlib.rcParams.update({
-    "pgf.texsystem": "pdflatex",
-    'font.family': 'serif',
-    'text.usetex': True,
-    'pgf.rcfonts': False,
-})
+# matplotlib.use("pgf")
+# matplotlib.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     'font.family': 'serif',
+#     'text.usetex': True,
+#     'pgf.rcfonts': False,
+# })
 
 df_to_cluster = pd.read_csv('.\data.csv')
 
@@ -37,21 +37,21 @@ for k in range(2, 3):
    silhouette_coefficients.append(score)
    print(k)
 
-plt.style.use("fivethirtyeight")
-plt.plot(range(2, 30), silhouette_coefficients)
-plt.xticks(range(2, 30))
+#plt.style.use("fivethirtyeight")
+plt.plot(range(2, 3), silhouette_coefficients)
+plt.xticks(range(2, 3))
 plt.xlabel("Number of Clusters")
 plt.ylabel("Silhouette Coefficient")
 #plt.show()
 
-plt.savefig('Silhouette_Coefficient.pgf')
+plt.savefig('Silhouette_Coefficient.png', transparent=True)
 
-plt.style.use("fivethirtyeight")
-plt.plot(range(2, 30), sse)
-plt.xticks(range(2, 30))
+#plt.style.use("fivethirtyeight")
+plt.plot(range(2, 3), sse)
+plt.xticks(range(2, 3))
 plt.xlabel("Number of Clusters")
 plt.ylabel("SSE")
 #plt.show()
 
-plt.savefig('Ellbow.pgf')
+plt.savefig('Ellbow.png', transparent=True)
 

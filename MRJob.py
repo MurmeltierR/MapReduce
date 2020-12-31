@@ -78,7 +78,7 @@ class KNNTest(MRJob):
         # Extract feature set and class
         data = line.split(',')
         label = data[-1]
-        features = [float(x) for x in data[:-1]]
+        features = [float(x) for x in data[1:-1]] #austauschen durch lambda
         nearest = [] #k nearest points
         count = {} #The number corresponding to each category in nearest
 
