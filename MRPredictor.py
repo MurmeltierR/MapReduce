@@ -8,6 +8,7 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONProtocol
 import heapq
+from operator import itemgetter
 import os
 import ast
 
@@ -16,7 +17,7 @@ OUTPUT_PROTOCOL = JSONProtocol
 
 current = os.getcwd()
 df_new = pd.DataFrame()
-#counter = 0
+
 class KNNTest(MRJob):
     '''
     KNN predicts classes. Receive test sets from the file and predict their classes based on the features of the test sets and compares 
@@ -68,8 +69,7 @@ class KNNTest(MRJob):
         super(KNNTest, self).__init__(*args, **kwargs)
 
     def steps(self): 
-        return [MRStep(mapper=self.mapper,combiner=self.combiner,reducer=self.reducer)]#
-        #,MRStep(reducer=self.get_k_songs_with_mindist)]
+        return [MRStep(mapper=self.mapper,combiner=self.combiner,reducer=self.reducer)]
 
     def mapper(self,_,line):
         '''
@@ -107,21 +107,22 @@ class KNNTest(MRJob):
             nn = [neighbour[0], neighbour[3]]
             subresult.append(nn)
 
-
         yield features_id, subresult
 
     def combiner(self, features_id, subresult):
     
-        features_list = []
+        subresults = []
         for feature in subresult:
-            features_list.append(feature)
+            subresults.append(feature)
             
-        yield features_id, features_list
+        yield features_id, subresults
 
     def reducer(self, features_id, subresults):
 
-        final_list = pd.Series(subresults)
-        kNN = final_list.nlargest(5)
+        for result in subresults:
+            kNN = heapq.nlargest(3, *result, key=itemgetter(0))
+        
+        kNN = [x[1] for x in kNN]
 
         yield features_id, kNN
 

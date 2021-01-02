@@ -24,10 +24,5 @@ def map_id_to_song(file):
         for index, song in o_song.iterrows():
             print(' {} von {} \n'.format(song['name'], song['artists']))
 
-                    
-    # for index, song in df_new.iterrows():
-    #     print('Name des Songs: {} \n Künstler: {} \n'.format(song['name'], song['artists']))
-        
-    # print(df_new)
 
 map_id_to_song('.\output.json')
