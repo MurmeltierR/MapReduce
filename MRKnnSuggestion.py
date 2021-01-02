@@ -7,6 +7,7 @@ from scipy import stats
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONProtocol
+from mrjob.compat import jobconf_from_env
 #import MRKnnTrain
 import heapq
 import os
@@ -76,6 +77,7 @@ class KNNTest(MRJob):
         Mapper function. Receives each row of the test set, extracts its feature set, and calculates the K points in the training set that are closest to it.
         The class with the most K points is determined and the class corresponding to that test ssample is predicted to be that class. 
         '''
+        self.increment_counter('group','num_mapper_calls',1)
         # Extract feature set and class of test data
         data = line.split(',')
         label = data[-1]
