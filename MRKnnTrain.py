@@ -9,7 +9,7 @@ import ast
 from datetime import datetime
 
 
-startTime = datetime.now()
+#startTime = datetime.now()
 
 
 class KNNTrain(MRJob):
@@ -47,4 +47,4 @@ class KNNTrain(MRJob):
 if __name__ == '__main__':
     startTime = datetime.now()
     KNNTrain.run()
-    print(datetime.now() - startTime)
+    #print(datetime.now() - startTime)
