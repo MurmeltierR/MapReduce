@@ -1,7 +1,5 @@
 import numpy as np
-import collections
 import pandas as pd
-import math
 from io import StringIO
 from scipy import stats
 from mrjob.job import MRJob
@@ -49,12 +47,11 @@ class KNNTest(MRJob):
         else:
             #read model
             self.model = {}
-            #job = MRKnnTrain.KNNTrain()
             with open(current+'/'+self.options.model,encoding='utf-16') as src:
                 for line in src:
                     # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
                     label_model, features_model = line.split('\t')
-                    features_model = features_model.replace('\n', '')#.strip('][').split(', ')
+                    features_model = features_model.replace('\n', '')
                     features_model = ast.literal_eval(features_model)
                     label_model = ast.literal_eval(label_model)
                     self.model[label_model] = features_model
@@ -91,6 +88,8 @@ class KNNTest(MRJob):
                 dis_frobenius = -1*np.linalg.norm(np.array(point[1:])-np.array(features)) #Default: Frobenius Distanz
                 #Make a tuple of distances, points, and categories to which they belong for easy comparison
                 item = tuple([dis_euk, point[1:], cat, point[0]])
+                if(dis_euk == 0):
+                    continue
                 if(len(nearest)<self.k):
                     # If the nearest length is less than k, append directly
                     nearest.append(item)
