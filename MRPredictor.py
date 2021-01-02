@@ -7,13 +7,11 @@ from scipy import stats
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONProtocol
-from mrjob.compat import jobconf_from_env
-#import MRKnnTrain
 import heapq
 import os
 import ast
 
-
+INPUT_PROTOCOL = JSONProtocol
 OUTPUT_PROTOCOL = JSONProtocol
 
 current = os.getcwd()
@@ -70,17 +68,16 @@ class KNNTest(MRJob):
         super(KNNTest, self).__init__(*args, **kwargs)
 
     def steps(self): 
-        return ([MRStep(mapper=self.mapper,reducer=self.reducer)])
+        return [MRStep(mapper=self.mapper,combiner=self.combiner,reducer=self.reducer)]#
+        #,MRStep(reducer=self.get_k_songs_with_mindist)]
 
     def mapper(self,_,line):
         '''
         Mapper function. Receives each row of the test set, extracts its feature set, and calculates the K points in the training set that are closest to it.
         The class with the most K points is determined and the class corresponding to that test ssample is predicted to be that class. 
         '''
-        self.increment_counter('group','num_mapper_calls',1)
         # Extract feature set and class of test data
         data = line.split(',')
-        label = data[-1]
         features = [float(x) for x in data[1:-1]] #austauschen durch lambda
         features_id = data[0]
         nearest = [] #k nearest points
@@ -104,20 +101,29 @@ class KNNTest(MRJob):
                 if(dis_euk > nearest[0][0]):
                     #If the distance of the new point is less than the longest point in the nearest, the longest point is popped out and the new point enters the nearest
                     heapq.heapreplace(nearest,item)
-              
-        yield features_id, nearest
+        
+        subresult = []
+        for neighbour in nearest:
+            nn = [neighbour[0], neighbour[3]]
+            subresult.append(nn)
 
-    def reducer(self, features_id, nearest):
-        '''
-        Reducer function that checks for suggestions for each line and writes them in a file
-        '''
-        nearest_list = []
-        for near in nearest:
-            for i in near:
-                nearest_list.append(i[3]) 
 
-        yield features_id, nearest_list
+        yield features_id, subresult
 
+    def combiner(self, features_id, subresult):
+    
+        features_list = []
+        for feature in subresult:
+            features_list.append(feature)
+            
+        yield features_id, features_list
+
+    def reducer(self, features_id, subresults):
+
+        final_list = pd.Series(subresults)
+        kNN = final_list.nlargest(5)
+
+        yield features_id, kNN
 
 if __name__ == '__main__':
     KNNTest.run()
