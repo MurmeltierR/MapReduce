@@ -11,19 +11,16 @@ import os
 import ast
 from datetime import datetime
 
+current = os.getcwd()
 OUTPUT_PROTOCOL = JSONProtocol
 
-class KNNPredictor(MRJob):
-    '''
-    KNN predicts classes. Receive test sets from the file and predict their classes based on the features of the test sets and compares 
-    them with the real classes to see if the prediction is successful
-    '''
+class KNNSuggestion(MRJob):
         
     def configure_args(self):
         '''
-        Input args. including the address of the model (output of KNNTrain), and the value of K.
+        Input args. including the address of output of MRPreprocess and the value of K.
         '''
-        super(KNNTest,self).configure_args()
+        super(KNNSuggestion,self).configure_args()
         #model's address
         self.add_passthru_arg("--model",
                                 type = str,)
@@ -36,7 +33,7 @@ class KNNPredictor(MRJob):
         '''
         Reads the corresponding data based on the input args.
         '''
-        super(KNNTest,self).load_args(args)
+        super(KNNSuggestion,self).load_args(args)
         #read model
         if self.options.model is None:
             #No input mod, error reported
@@ -44,7 +41,7 @@ class KNNPredictor(MRJob):
         else:
             #read model
             self.model = {}
-            with open(current+'/'+self.options.model,encoding='utf-16') as src:
+            with open(current+'./'+self.options.model,encoding='utf-16') as src:
                 for line in src:
                     # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
                     label_model, features_model = line.split('\t')
@@ -60,7 +57,7 @@ class KNNPredictor(MRJob):
             self.option_parser.error("K value must be integer.")
 
     def __init__(self, *args, **kwargs):
-        super(KNNTest, self).__init__(*args, **kwargs)
+        super(KNNSuggestion, self).__init__(*args, **kwargs)
 
     def steps(self): 
         return [MRStep(mapper=self.mapper,combiner=self.combiner,reducer=self.reducer)]
@@ -124,4 +121,4 @@ class KNNPredictor(MRJob):
         yield features_id, kNN
 
 if __name__ == '__main__':
-    KNNPredictor.run()
+    KNNSuggestion.run()

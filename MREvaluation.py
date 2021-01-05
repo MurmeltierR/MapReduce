@@ -9,17 +9,18 @@ import os
 import ast
 from datetime import datetime
 
+current = os.getcwd()
 true = 0
 false = 0
 class KNNEval(MRJob):
     '''
-    KNN predicts classes. Receive test sets from the file and predict their classes based on the features of the test sets and compare 
-    them with the real classes to see if the prediction is successful
+    KNNEval evaluates the suggestion. It compares the label of the given test data with the real class, and if
+        prediction is correct, output (true, 1), otherwise output (false, 1)
     '''
 
     def configure_args(self):
         '''
-        Input args. including the address of the model (output of KNNTrain), and the value of K.
+        Input args. including the address of the output of KNNPreprocess and the value of K.
         '''
         super(KNNEval,self).configure_args()
         #model's address
@@ -44,7 +45,7 @@ class KNNEval(MRJob):
         else:
             #read model
             self.model = {}
-            with open('./'+self.options.model,encoding='utf-16') as src:
+            with open(current+'/' + self.options.model,encoding='utf-16') as src:
                 for line in src:
                     # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
                     #label, features = job.parse_output_line(line.encode())
