@@ -9,6 +9,7 @@ import heapq
 import os
 import ast
 from datetime import datetime
+from sklearn.metrics import precision_recall_fscore_support
 
 startTime = datetime.now()
 current = os.getcwd()
@@ -47,7 +48,7 @@ class KNNTest(MRJob):
         else:
             #read model
             self.model = {}
-            with open(current+'/'+self.options.model,encoding='utf-8') as src:
+            with open(current+'/'+self.options.model,encoding='utf-16') as src:
                 for line in src:
                     # For each line of the model file, read the corresponding labels and features and store them in the dictionary.
                     #label, features = job.parse_output_line(line.encode())
@@ -75,18 +76,23 @@ class KNNTest(MRJob):
         The class with the most K points is determined and the class corresponding to that test sample is predicted to be that class. Then compare it with the real class, and if
         prediction is correct, output (true, 1), otherwise output (false, 1)
         '''
+        global y_pred
+        y_pred=[]
+        global y_label
+        y_label=[]
         # Extract feature set and class
         data = line.split(',')
         label = data[-1]
         features = [float(x) for x in data[1:-1]] #austauschen durch lambda
         nearest = [] #k nearest points
         count = {} #The number corresponding to each category in nearest
-
+        y_label.append(label)
         for cat in self.model:
             for point in self.model[cat]:
                 point[1:] = [float(x) for x in point[1:]]
                 # distance, multiplied by -1 because afterwards the heap sort will be used and needs to be ranked from largest to smallest, but the python implementation is the smallest heap, so *(-1)
-                dis = -1*np.linalg.norm(np.array(point[1:])-np.array(features)) 
+                dis = -1*np.linalg.norm(np.array(point[1:])-np.array(features))
+                dis_man = -1*np.linalg.norm(np.array(point[1:])-np.array(features), ord=1) 
                 #Make a tuple of distances, points, and categories to which they belong for easy comparison
                 item = tuple([dis, point, cat])
                 if(len(nearest)<self.k):
@@ -109,6 +115,7 @@ class KNNTest(MRJob):
                 count[temp[2]] += 1
         # of most calculated categories        
         res = max(count, key=count.get)
+        y_pred.append(res)
         # Output true if the prediction is successful, otherwise false
         if(res==label):
             yield 'true', 1
@@ -132,3 +139,6 @@ if __name__ == '__main__':
     KNNTest.run()
     print("Accuary:"+str(true/(true+false)*100)+"%")
     print(datetime.now() - startTime)
+    print(precision_recall_fscore_support(y_label, y_pred, average='macro'))
+    print(precision_recall_fscore_support(y_label, y_pred, average='micro'))
+    print(precision_recall_fscore_support(y_label, y_pred, average='weighted'))
