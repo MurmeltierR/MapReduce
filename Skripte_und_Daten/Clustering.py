@@ -1,0 +1,58 @@
+import numpy as np
+import pandas as pd
+
+import os
+import matplotlib.pyplot as plt
+import matplotlib
+from sklearn.metrics import silhouette_score
+from sklearn import cluster
+from sklearn.preprocessing import MinMaxScaler
+
+# matplotlib.use("pgf")
+# matplotlib.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     'font.family': 'serif',
+#     'text.usetex': True,
+#     'pgf.rcfonts': False,
+# })
+
+df_to_cluster = pd.read_csv('.\data.csv')
+
+df_to_cluster = df_to_cluster.drop(columns=['duration_ms','release_date','popularity','year','id','explicit'])
+df_to_cluster = df_to_cluster[['name','artists','acousticness', 'danceability', 'energy', 'instrumentalness', 'key',
+       'liveness', 'loudness', 'mode', 'speechiness', 'tempo', 'valence']]
+
+data = df_to_cluster.iloc[:,:].values
+
+scaler = MinMaxScaler() # You use MinMaxScaler when you do not assume that the shape of all your features follows a normal distribution otherwise StandardScaler
+
+data[:,2:] = scaler.fit_transform(data[:,2:])
+
+sse = []
+#silhouette_coefficients = []
+for k in range(2, 30):
+   cluster_model = cluster.KMeans(n_clusters=k,  init='k-means++')
+   cluster_model.fit(data[:,2:])
+   #score = silhouette_score(data[:,2:], cluster_model.labels_)
+   sse.append(cluster_model.inertia_)
+   #silhouette_coefficients.append(score)
+   print(k)
+
+# #plt.style.use("fivethirtyeight")
+# plt.plot(range(2, 30), silhouette_coefficients)
+# plt.xticks(range(2, 30))
+# plt.xlabel("Number of Clusters")
+# plt.ylabel("Silhouette Coefficient")
+# #plt.show()
+
+#plt.savefig('Silhouette_Coefficient.png', transparent=True)
+
+#plt.style.use("fivethirtyeight")
+plt.plot(range(2, 30), sse)
+plt.xticks(range(2, 30))
+plt.xlabel("Number of Clusters")
+plt.ylabel("SSE")
+#plt.show()
+
+plt.savefig('Ellbow.png', transparent=True)
+
