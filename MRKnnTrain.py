@@ -9,19 +9,16 @@ import ast
 from datetime import datetime
 
 
-#startTime = datetime.now()
-
-
-class KNNTrain(MRJob):
+class KNNPreprocess(MRJob):
 
     '''
-    KNN training class. Receive training set input, output (type, list of feature sets).
+    KNN training class. Receive training set input, output (label, list of feature sets).
     '''
 
     OUTPUT_PROTOCOL = JSONProtocol
 
     def __init__(self, *args, **kwargs):
-        super(KNNTrain, self).__init__(*args, **kwargs)
+        super(KNNPreprocess, self).__init__(*args, **kwargs)
         
     def steps(self):
         return ([MRStep(mapper=self.mapper,reducer=self.reducer)])
@@ -45,6 +42,4 @@ class KNNTrain(MRJob):
         yield label, features_list
 
 if __name__ == '__main__':
-    startTime = datetime.now()
-    KNNTrain.run()
-    #print(datetime.now() - startTime)
+    KNNPreprocess.run()
